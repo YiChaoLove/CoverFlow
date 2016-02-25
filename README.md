@@ -1,5 +1,6 @@
-#coverflow for android
+#Coverflow For Android
 ###Demo picture as below:
-we are coding......
+We(@ytumaotong1992) are coding......
+
 
 ![Aaron Swartz](img.jpg)

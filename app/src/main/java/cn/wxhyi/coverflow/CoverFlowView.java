@@ -193,4 +193,8 @@ public class CoverFlowView extends RecyclerView {
     public int getCenterChild() {
         return centerChild;
     }
+
+    interface ConverFlowListener{
+        void onItemChanged();
+    }
 }
