@@ -16,13 +16,9 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-//        Log.i("view.getId", view.getId() + "");
-//        Log.i("parent:getChildItemId", parent.getChildItemId(view) + "");
-
         if (view.getId() == 0){
             return;
         }
         outRect.left = padding;
-//        outRect.right += padding;
     }
 }
