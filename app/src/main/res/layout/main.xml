@@ -1,13 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <cn.wxhyi.coverflow.CoverFlowView
-        android:id="@+id/listView"
+        android:id="@+id/cover_flow"
+        android:layout_marginTop="100dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="120dp"/>
 
-    </cn.wxhyi.coverflow.CoverFlowView>
-</LinearLayout>
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_below="@id/cover_flow"
+        android:layout_width="20dp"
+        android:layout_height="16dp"
+        android:background="@drawable/arrow_up"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_marginTop="3dp"
+        android:layout_below="@id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textColor="#33b5e5"
+        android:textSize="18sp"
+        android:text="animal"/>
+</RelativeLayout>
