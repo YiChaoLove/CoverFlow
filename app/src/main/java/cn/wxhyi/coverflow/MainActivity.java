@@ -1,12 +1,10 @@
 package cn.wxhyi.coverflow;
 
 import android.app.Activity;
-import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.LinkedList;
@@ -47,6 +45,16 @@ public class MainActivity extends Activity implements CoverFlowView.CoverFlowIte
         coverFlowView.setLayoutManager(layoutManager);
         coverFlowView.setAdapter(coverFlowAdapter);
         coverFlowView.setCoverFlowListener(this);
+        coverFlowView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Log.i(TAG, "onItemClick:position:" + position);
+//                Log.i(TAG, "adapter:boderposition:" + coverFlowAdapter.getBorder_position());
+//                int real_position = position - coverFlowAdapter.getBorder_position() + 1;
+//                Log.i(TAG, "real_position:" + real_position);
+                coverFlowView.scrollToCenter(position);
+            }
+        }));
         //You should call scrollToPosition method at last.
         layoutManager.scrollToPosition(coverFlowAdapter.getItemCount() / 2);
         onItemSelected(coverFlowAdapter.getItemCount() / 2);
@@ -62,7 +70,7 @@ public class MainActivity extends Activity implements CoverFlowView.CoverFlowIte
     @Override
     public void onItemSelected(int position) {
         //do something you want
-        Log.i(TAG, "onItemSelected" + position);
+//        Log.i(TAG, "onItemSelected" + position);
         text.setText(cardModels.get(position).getTitle());
     }
 }

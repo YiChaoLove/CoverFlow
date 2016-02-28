@@ -3,7 +3,7 @@ package cn.wxhyi.coverflow;
 import java.io.Serializable;
 
 /**
- * Created by bjhl on 16/2/26.
+ * Created by yichao on 16/2/26.
  * 学习号model
  */
 public class CardModel implements Serializable {

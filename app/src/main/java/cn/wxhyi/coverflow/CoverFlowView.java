@@ -4,11 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Camera;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.LightingColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -25,6 +24,8 @@ public class CoverFlowView extends RecyclerView {
 
     private int last_position = 0;
     private int current_position = 0;
+    private int left_border_position = 0;
+    private int right_border_position = 0;
 
     private boolean flag = false;
 
@@ -118,8 +119,11 @@ public class CoverFlowView extends RecyclerView {
     protected int getChildDrawingOrder(int childCount, int i) {
         int centerChild = childCount / 2;
         if (!flag) {
-            Log.i(TAG, "center_positon: " + centerChild);
             ((CoverFlowAdapter) getAdapter()).setBorder_position(centerChild);
+            left_border_position = centerChild;
+            right_border_position = ((CoverFlowAdapter) getAdapter()).getItemCount() - centerChild - 1;
+            Log.i(TAG, "left_border_position:" + left_border_position);
+            Log.i(TAG, "right_border_position" + right_border_position);
             flag = true;
         }
         current_position = ((LinearLayoutManager) getLayoutManager()).findFirstVisibleItemPosition() + centerChild;
@@ -160,29 +164,58 @@ public class CoverFlowView extends RecyclerView {
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                Log.i(TAG, "onScrollStateChanged");
+
                 coverFlowListener.onItemSelected(current_position);
+                Log.i(TAG, "current_position:" + current_position);
+                if (current_position > right_border_position){
+                    scrollToCenter(right_border_position);
+                    return;
+                }
+                if (current_position < left_border_position){
+                    scrollToCenter(left_border_position);
+                    return;
+                }
 
                 int first_position = ((LinearLayoutManager)getLayoutManager()).findFirstVisibleItemPosition();
-                Log.i(TAG, "current_position:" + current_position);
-                Log.i(TAG, "first_position:" + first_position);
-
-                View firstChild = CoverFlowView.this.getChildAt(current_position - first_position);
+                View centerChild = CoverFlowView.this.getChildAt(current_position - first_position);
                 int[] location = new int[2];
-                firstChild.getLocationInWindow(location);
-                int centerItemX = location[0] + firstChild.getWidth() / 2;
-                Log.i(TAG, "current_location:x:" + location[0] + ",y:" + location[1]);
-                Log.i(TAG, "centerItemX:" + centerItemX);
+                centerChild.getLocationInWindow(location);
+                int centerItemX = location[0] + centerChild.getWidth() / 2;
 
                 Display display = getDisplay();
                 final Point size = new Point();
                 display.getSize(size);
                 int width = size.x;
                 int centerX = width / 2;
-                Log.i(TAG, "centerX:" + centerX);
-
                 CoverFlowView.this.smoothScrollBy(centerItemX - centerX, 0);
             }
         }
     }
+
+    public void scrollToCenter(int position){
+        if (position <= right_border_position && position >= left_border_position){
+            int first_position = ((LinearLayoutManager)getLayoutManager()).findFirstVisibleItemPosition();
+            int current_position = position - first_position;
+            View targetChild = this.getChildAt(current_position);
+            int[] location = new int[2];
+            targetChild.getLocationInWindow(location);
+            final int targetItemX = location[0] + targetChild.getWidth() / 2;
+
+            Display display = getDisplay();
+            final Point size = new Point();
+            display.getSize(size);
+            int width = size.x;
+            final int centerX = width / 2;
+
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    CoverFlowView.this.smoothScrollBy(targetItemX - centerX, 0);
+                }
+            });
+        }
+    }
+
 
 }
