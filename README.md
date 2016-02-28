@@ -2,7 +2,7 @@
 ###Demo gif as below:
 We(@ytumaotong1992) are coding......
 
-<img src="cover.gif" width="480"><br>
+<img src="cover.gif" width="350"><br>
 <img src="cover_vertical.gif" width="240">
 
 ###About:
