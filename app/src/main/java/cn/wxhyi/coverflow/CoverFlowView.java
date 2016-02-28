@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,15 +22,20 @@ import android.view.View;
 public class CoverFlowView extends RecyclerView {
 
     private static final String TAG = "CoverFlowView";
+    public static final int VERTICAL = 1;
+    public static final int HORIZONTAL = 2;
 
     private int last_position = 0;
     private int current_position = 0;
     private int left_border_position = 0;
     private int right_border_position = 0;
 
+    private int orientation = 0;
+
     private boolean flag = false;
 
     private CoverFlowItemListener coverFlowListener;
+    private LinearLayoutManager layoutManager;
 
     private final Camera mCamera = new Camera();
     private final Matrix mMatrix = new Matrix();
@@ -78,13 +84,14 @@ public class CoverFlowView extends RecyclerView {
         final int absChildCenterX = child.getLeft() + childCenterX;
         //distance of child center to the list center
         final int distanceY = parentCenterY - absChildCenterY;
-        //radius of imaginary cirlce
-        final int r = getHeight() / 2;
 
-        final int distancX = parentCenterX - absChildCenterX;
+        final int distanceX = parentCenterX - absChildCenterX;
 
-//      prepareMatrix(mMatrix, distanceY, r);
-        prepareMatrix(mMatrix, distancX, getWidth() / 2);
+        if (orientation == HORIZONTAL) {
+            prepareMatrix(mMatrix, distanceX, getWidth() / 2);
+        } else {
+            prepareMatrix(mMatrix, distanceY, getHeight() / 2);
+        }
 
         mMatrix.preTranslate(-childCenterX, -childCenterY);
         mMatrix.postTranslate(childCenterX, childCenterY);
@@ -126,7 +133,7 @@ public class CoverFlowView extends RecyclerView {
             Log.i(TAG, "right_border_position" + right_border_position);
             flag = true;
         }
-        current_position = ((LinearLayoutManager) getLayoutManager()).findFirstVisibleItemPosition() + centerChild;
+        current_position = layoutManager.findFirstVisibleItemPosition() + centerChild;
         if (last_position != current_position) {
             last_position = current_position;
             coverFlowListener.onItemChanged(current_position);
@@ -152,6 +159,7 @@ public class CoverFlowView extends RecyclerView {
 
     public interface CoverFlowItemListener {
         void onItemChanged(int position);
+
         void onItemSelected(int position);
     }
 
@@ -168,16 +176,16 @@ public class CoverFlowView extends RecyclerView {
 
                 coverFlowListener.onItemSelected(current_position);
                 Log.i(TAG, "current_position:" + current_position);
-                if (current_position > right_border_position){
+                if (current_position > right_border_position) {
                     scrollToCenter(right_border_position);
                     return;
                 }
-                if (current_position < left_border_position){
+                if (current_position < left_border_position) {
                     scrollToCenter(left_border_position);
                     return;
                 }
 
-                int first_position = ((LinearLayoutManager)getLayoutManager()).findFirstVisibleItemPosition();
+                int first_position = layoutManager.findFirstVisibleItemPosition();
                 View centerChild = CoverFlowView.this.getChildAt(current_position - first_position);
                 int[] location = new int[2];
                 centerChild.getLocationInWindow(location);
@@ -193,9 +201,9 @@ public class CoverFlowView extends RecyclerView {
         }
     }
 
-    public void scrollToCenter(int position){
-        if (position <= right_border_position && position >= left_border_position){
-            int first_position = ((LinearLayoutManager)getLayoutManager()).findFirstVisibleItemPosition();
+    public void scrollToCenter(int position) {
+        if (position <= right_border_position && position >= left_border_position) {
+            int first_position = layoutManager.findFirstVisibleItemPosition();
             int current_position = position - first_position;
             View targetChild = this.getChildAt(current_position);
             int[] location = new int[2];
@@ -217,5 +225,41 @@ public class CoverFlowView extends RecyclerView {
         }
     }
 
+    public void setOrientation(int orientation) {
+        this.orientation = orientation;
+        DividerItemDecoration itemDecoration;
+        if (orientation == VERTICAL) {
+            layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+            itemDecoration = new DividerItemDecoration(0, -50);
+        } else {
+            layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            itemDecoration = new DividerItemDecoration(-50, 0);
+        }
+        this.setLayoutManager(layoutManager);
+        this.addItemDecoration(itemDecoration);
+    }
 
+    private class DividerItemDecoration extends RecyclerView.ItemDecoration {
+
+        private int leftPadding, topPadding;
+
+        public DividerItemDecoration(int leftPadding, int topPadding) {
+            this.leftPadding = leftPadding;
+            this.topPadding = topPadding;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            if (view.getId() == 0) {
+                return;
+            }
+            outRect.left = leftPadding;
+            outRect.top = topPadding;
+        }
+    }
+
+    @Override
+    public LinearLayoutManager getLayoutManager() {
+        return layoutManager;
+    }
 }
