@@ -23,30 +23,11 @@ public class MainActivity extends Activity implements CoverFlowView.CoverFlowIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //vertical layout
-//        setContentView(R.layout.main_vertical);
-        setContentView(R.layout.main);
-
-
-        coverFlowView = (CoverFlowView) this.findViewById(R.id.cover_flow);
-        text = (TextView) this.findViewById(R.id.text);
-        cardModels = new LinkedList<>();
-        cardModels.add(new CardModel("1.Alligator", "" + R.drawable.alligator));
-        cardModels.add(new CardModel("2.Beaver", "" + R.drawable.beaver));
-        cardModels.add(new CardModel("3.Frog", "" + R.drawable.frog));
-        cardModels.add(new CardModel("4.Kangaroo", "" + R.drawable.kangaroo));
-        cardModels.add(new CardModel("5.Leopard", "" + R.drawable.leopard));
-        cardModels.add(new CardModel("6.Snail", "" + R.drawable.snail));
-        cardModels.add(new CardModel("7.Wolf", "" + R.drawable.wolf));
-        cardModels.add(new CardModel("8.Monkey", "" + R.drawable.monkey));
-        cardModels.add(new CardModel("9.Tiger", "" + R.drawable.tiger));
-
-        //vertical overlap listview
-//        coverFlowView.setOrientation(CoverFlowView.VERTICAL);
-        // set whether tilt item
-//        coverFlowView.setTilted(false);
-        coverFlowView.setOrientation(CoverFlowView.HORIZONTAL);
-
+        setContentView(R.layout.main);//or vertical layout R.layout.main_vertical
+        initView();
+        initData();
+        coverFlowView.setOrientation(CoverFlowView.HORIZONTAL);//or CoverFlowView.VERTICAL
+        coverFlowView.setTilted(true);// set whether tilted item
         coverFlowAdapter = new CoverFlowAdapter(cardModels, this);
         coverFlowView.setAdapter(coverFlowAdapter);
         coverFlowView.setCoverFlowListener(this);
@@ -57,22 +38,43 @@ public class MainActivity extends Activity implements CoverFlowView.CoverFlowIte
                 coverFlowView.scrollToCenter(position);
             }
         }));
-
+        //scroll to center item
         coverFlowView.getLayoutManager().scrollToPosition(coverFlowAdapter.getItemCount() / 2);
-        onItemSelected(coverFlowAdapter.getItemCount() / 2);
-        coverFlowAdapter.notifyDataSetChanged();
+        //scroll to item's center
+        new android.os.Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                coverFlowView.scrollToCenter(coverFlowAdapter.getItemCount() / 2);
+            }
+        }, 200);
+    }
+
+    private void initView() {
+        coverFlowView = (CoverFlowView) this.findViewById(R.id.cover_flow);
+        text = (TextView) this.findViewById(R.id.text);
+    }
+
+    private void initData() {
+        cardModels = new LinkedList<>();
+        cardModels.add(new CardModel("1.Alligator", "" + R.drawable.alligator));
+        cardModels.add(new CardModel("2.Beaver", "" + R.drawable.beaver));
+        cardModels.add(new CardModel("3.Frog", "" + R.drawable.frog));
+        cardModels.add(new CardModel("4.Kangaroo", "" + R.drawable.kangaroo));
+        cardModels.add(new CardModel("5.Leopard", "" + R.drawable.leopard));
+        cardModels.add(new CardModel("6.Snail", "" + R.drawable.snail));
+        cardModels.add(new CardModel("7.Wolf", "" + R.drawable.wolf));
+        cardModels.add(new CardModel("8.Monkey", "" + R.drawable.monkey));
+        cardModels.add(new CardModel("9.Tiger", "" + R.drawable.tiger));
     }
 
     @Override
     public void onItemChanged(int position) {
         //do something you want
-//        Log.i(TAG, "onItemChanged" + position);
     }
 
     @Override
     public void onItemSelected(int position) {
         //do something you want
-//        Log.i(TAG, "onItemSelected" + position);
         text.setText(cardModels.get(position).getTitle());
     }
 }

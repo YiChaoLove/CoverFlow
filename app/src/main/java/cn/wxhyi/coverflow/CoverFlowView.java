@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -21,6 +22,7 @@ import android.view.View;
  */
 public class CoverFlowView extends RecyclerView {
 
+    private Handler handler = new Handler(Looper.getMainLooper());
     private static final String TAG = "CoverFlowView";
 
     /**
@@ -114,18 +116,20 @@ public class CoverFlowView extends RecyclerView {
         return false;
     }
 
-    private void prepareMatrix(final Matrix outMatrix, int distanceY, int r) {
+    private void prepareMatrix(final Matrix outMatrix, int distance, int r) {
         //clip the distance
-        final int d = Math.min(r, Math.abs(distanceY));
+        final int d = Math.min(r, Math.abs(distance));
         //use circle formula
         final float translateZ = (float) Math.sqrt((r * r) - (d * d));
         mCamera.save();
-        mCamera.translate(0, 0, r - translateZ);
+        float offset = r - translateZ;
+        mCamera.translate(0, 0, offset);
         if (isTilted) {
-            if (distanceY > 0) {
-                mCamera.rotateY((r - translateZ) / TILTED_FACTOR);
+            float deg = offset / TILTED_FACTOR;
+            if (distance > 0) {
+                mCamera.rotateY(deg);
             } else {
-                mCamera.rotateY(- (r - translateZ) / TILTED_FACTOR);
+                mCamera.rotateY(- deg);
             }
         }
         mCamera.getMatrix(outMatrix);
@@ -226,6 +230,9 @@ public class CoverFlowView extends RecyclerView {
             int first_position = layoutManager.findFirstVisibleItemPosition();
             int current_position = position - first_position;
             View targetChild = this.getChildAt(current_position);
+            if (targetChild == null) {
+                return;
+            }
             int[] location = new int[2];
             targetChild.getLocationInWindow(location);
             final int targetItemX = location[0] + targetChild.getWidth() / 2;
@@ -236,7 +243,7 @@ public class CoverFlowView extends RecyclerView {
             int width = size.x;
             final int centerX = width / 2;
 
-            new Handler().post(new Runnable() {
+            handler.post(new Runnable() {
                 @Override
                 public void run() {
                     CoverFlowView.this.smoothScrollBy(targetItemX - centerX, 0);
