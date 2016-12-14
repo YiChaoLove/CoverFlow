@@ -41,8 +41,10 @@ public class MainActivity extends Activity implements CoverFlowView.CoverFlowIte
         cardModels.add(new CardModel("8.Monkey", "" + R.drawable.monkey));
         cardModels.add(new CardModel("9.Tiger", "" + R.drawable.tiger));
 
-        //vertical overlap list iew
+        //vertical overlap listview
 //        coverFlowView.setOrientation(CoverFlowView.VERTICAL);
+        // set whether tilt item
+//        coverFlowView.setTilted(false);
         coverFlowView.setOrientation(CoverFlowView.HORIZONTAL);
 
         coverFlowAdapter = new CoverFlowAdapter(cardModels, this);

@@ -22,6 +22,19 @@ import android.view.View;
 public class CoverFlowView extends RecyclerView {
 
     private static final String TAG = "CoverFlowView";
+
+    /**
+     * Whether set item angle
+     */
+    private boolean isTilted = true;
+    /**
+     * Item tilted factor
+     */
+    private static final int TILTED_FACTOR = 15;
+
+    /**
+     * LayoutManager orientation
+     */
     public static final int VERTICAL = 1;
     public static final int HORIZONTAL = 2;
 
@@ -108,6 +121,13 @@ public class CoverFlowView extends RecyclerView {
         final float translateZ = (float) Math.sqrt((r * r) - (d * d));
         mCamera.save();
         mCamera.translate(0, 0, r - translateZ);
+        if (isTilted) {
+            if (distanceY > 0) {
+                mCamera.rotateY((r - translateZ) / TILTED_FACTOR);
+            } else {
+                mCamera.rotateY(- (r - translateZ) / TILTED_FACTOR);
+            }
+        }
         mCamera.getMatrix(outMatrix);
         mCamera.restore();
     }
@@ -261,5 +281,13 @@ public class CoverFlowView extends RecyclerView {
     @Override
     public LinearLayoutManager getLayoutManager() {
         return layoutManager;
+    }
+
+    /**
+     * Whether set item angle
+     * @param tilted
+     */
+    public void setTilted(boolean tilted) {
+        isTilted = tilted;
     }
 }
