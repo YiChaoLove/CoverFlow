@@ -27,6 +27,7 @@ public class CoverFlowView extends RecyclerView {
     private static final String TAG = "CoverFlowView";
 
     public static boolean scrollInfinity = false;
+    private int adapterDataSize = 0;
 
     /**
      * Whether set item angle
@@ -207,7 +208,7 @@ public class CoverFlowView extends RecyclerView {
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                 Log.i(TAG, "onScrollStateChanged");
 
-                coverFlowListener.onItemSelected(current_position);
+                coverFlowListener.onItemSelected(current_position % adapterDataSize);
                 Log.i(TAG, "current_position:" + current_position);
                 if (!scrollInfinity && current_position > right_border_position) {
                     scrollToCenter(right_border_position);
@@ -302,6 +303,11 @@ public class CoverFlowView extends RecyclerView {
     public void setAdapter(Adapter adapter) {
         if (!scrollInfinity) {
             ((CoverFlowAdapter) adapter).setFactor(1);
+        }
+        adapterDataSize = ((CoverFlowAdapter) adapter).getOriginDataSize();
+        if (adapterDataSize == 0) {
+            Log.e(TAG, "adapter size is null!");
+            return;
         }
         super.setAdapter(adapter);
     }

@@ -2,7 +2,6 @@ package cn.wxhyi.coverflow;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -103,5 +102,12 @@ public class CoverFlowAdapter extends RecyclerView.Adapter<CoverFlowAdapter.View
     public void setFactor(int factor) {
         this.factor = factor;
         this.total = cardModels.size() * factor;
+    }
+
+    public int getOriginDataSize() {
+        if (cardModels == null) {
+            return 0;
+        }
+        return cardModels.size();
     }
 }

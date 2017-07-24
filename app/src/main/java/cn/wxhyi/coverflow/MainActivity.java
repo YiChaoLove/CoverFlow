@@ -26,8 +26,8 @@ public class MainActivity extends Activity implements CoverFlowView.CoverFlowIte
         setContentView(R.layout.main);//or vertical layout R.layout.main_vertical
         initView();
         initData();
-        coverFlowView.setTilted(true);// set whether tilted item
         coverFlowAdapter = new CoverFlowAdapter(cardModels, this);
+        coverFlowView.setTilted(true);// set whether tilted item
         coverFlowView.setAdapter(coverFlowAdapter);
         coverFlowView.setCoverFlowListener(this);
         coverFlowView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
@@ -74,6 +74,6 @@ public class MainActivity extends Activity implements CoverFlowView.CoverFlowIte
     @Override
     public void onItemSelected(int position) {
         //do something you want
-        text.setText(cardModels.get(position % cardModels.size()).getTitle());
+        text.setText(cardModels.get(position).getTitle());
     }
 }

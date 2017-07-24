@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 /**
  * Created by yichao on 16/2/26.
- * 学习号model
  */
 public class CardModel implements Serializable {
 
