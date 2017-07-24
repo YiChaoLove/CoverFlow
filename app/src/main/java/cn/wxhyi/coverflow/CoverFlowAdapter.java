@@ -2,6 +2,7 @@ package cn.wxhyi.coverflow;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,6 +23,9 @@ public class CoverFlowAdapter extends RecyclerView.Adapter<CoverFlowAdapter.View
 
     private static String TAG = "CoverFlowAdapter";
 
+    private int total = 0;
+    private int factor = 100;
+
     private LinkedList<CardModel> cardModels;
     private int border_position = 0;
 
@@ -30,6 +34,7 @@ public class CoverFlowAdapter extends RecyclerView.Adapter<CoverFlowAdapter.View
 
     public CoverFlowAdapter(LinkedList<CardModel> cardModels, Context context){
         this.cardModels = cardModels;
+        this.total = cardModels.size() * factor;
         loader = ImageLoader.getInstance();
         loader.init(ImageLoaderConfiguration.createDefault(context));
         displayImageOptions = new DisplayImageOptions.Builder()
@@ -45,6 +50,7 @@ public class CoverFlowAdapter extends RecyclerView.Adapter<CoverFlowAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        position = position % cardModels.size();
         holder.card_layout.setVisibility(View.VISIBLE);
         showPic(holder.card_image, "drawable://" + cardModels.get(position).getImg());
         if (!cardModels.get(position).isBorder){
@@ -57,7 +63,7 @@ public class CoverFlowAdapter extends RecyclerView.Adapter<CoverFlowAdapter.View
 
     @Override
     public int getItemCount() {
-        return cardModels.size();
+        return total;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -79,6 +85,7 @@ public class CoverFlowAdapter extends RecyclerView.Adapter<CoverFlowAdapter.View
         for (int i  = 0; i < border_position; i++){
             cardModels.addFirst(new CardModel(true));
             cardModels.addLast(new CardModel(true));
+            total = total + 2;
         }
         notifyDataSetChanged();
     }
@@ -91,5 +98,10 @@ public class CoverFlowAdapter extends RecyclerView.Adapter<CoverFlowAdapter.View
                 loader.displayImage(url, imgView, displayImageOptions);
             }
         }
+    }
+
+    public void setFactor(int factor) {
+        this.factor = factor;
+        this.total = cardModels.size() * factor;
     }
 }

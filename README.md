@@ -7,8 +7,19 @@
 ###About:
 It's extends RecyclerView.
 
+###Scroll infinity
+
+    <cn.wxhyi.coverflow.CoverFlowView
+        xmlns:cfv="http://schemas.android.com/apk/res/cn.wxhyi.coverflow"
+        android:id="@+id/cover_flow"
+        android:layout_marginTop="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        cfv:scroll_infinity="true"
+        cfv:scroll_orientation="horizontal"/>
+        
 ###Thanks:
-@ytumaotong1992
+ytumaotong1992
 
 ###Reference:
 https://github.com/renard314/ListView3d <br>

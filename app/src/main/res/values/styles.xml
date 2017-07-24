@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <declare-styleable name="CoverFlowView">
+        <attr name="scroll_infinity" format="boolean"/>
+        <attr name="scroll_orientation" format="string"/>
+    </declare-styleable>
+
 </resources>

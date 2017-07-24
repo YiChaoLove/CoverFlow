@@ -1,6 +1,7 @@
 package cn.wxhyi.coverflow;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Camera;
 import android.graphics.Canvas;
@@ -24,6 +25,8 @@ public class CoverFlowView extends RecyclerView {
 
     private Handler handler = new Handler(Looper.getMainLooper());
     private static final String TAG = "CoverFlowView";
+
+    public static boolean scrollInfinity = false;
 
     /**
      * Whether set item angle
@@ -59,28 +62,34 @@ public class CoverFlowView extends RecyclerView {
      */
     private final Paint mPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
 
-
     public CoverFlowView(Context context) {
         super(context);
-        init();
+        init(context, null);
     }
 
     public CoverFlowView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context, attrs);
     }
 
     public CoverFlowView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(context, attrs);
     }
 
-    private void init() {
+    private void init(Context context, AttributeSet attrs) {
         mPaint.setAntiAlias(true);
         this.setChildrenDrawingOrderEnabled(true);
         this.addOnScrollListener(new CoverFlowScrollListener());
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CoverFlowView, 0, 0);
+        try {
+            scrollInfinity = ta.getBoolean(R.styleable.CoverFlowView_scroll_infinity, false);
+            orientation = "vertical".equals(ta.getString(R.styleable.CoverFlowView_scroll_orientation)) ? VERTICAL : HORIZONTAL;
+        } finally {
+            ta.recycle();
+        }
+        setOrientation();
     }
-
 
     @Override
     public boolean drawChild(Canvas canvas, View child, long drawingTime) {
@@ -149,7 +158,7 @@ public class CoverFlowView extends RecyclerView {
     @Override
     protected int getChildDrawingOrder(int childCount, int i) {
         int centerChild = childCount / 2;
-        if (!flag) {
+        if (!flag && !scrollInfinity) {
             ((CoverFlowAdapter) getAdapter()).setBorder_position(centerChild);
             left_border_position = centerChild;
             right_border_position = ((CoverFlowAdapter) getAdapter()).getItemCount() - centerChild - 1;
@@ -200,11 +209,11 @@ public class CoverFlowView extends RecyclerView {
 
                 coverFlowListener.onItemSelected(current_position);
                 Log.i(TAG, "current_position:" + current_position);
-                if (current_position > right_border_position) {
+                if (!scrollInfinity && current_position > right_border_position) {
                     scrollToCenter(right_border_position);
                     return;
                 }
-                if (current_position < left_border_position) {
+                if (!scrollInfinity && current_position < left_border_position) {
                     scrollToCenter(left_border_position);
                     return;
                 }
@@ -226,7 +235,7 @@ public class CoverFlowView extends RecyclerView {
     }
 
     public void scrollToCenter(int position) {
-        if (position <= right_border_position && position >= left_border_position) {
+        if (scrollInfinity || (position <= right_border_position && position >= left_border_position)) {
             int first_position = layoutManager.findFirstVisibleItemPosition();
             int current_position = position - first_position;
             View targetChild = this.getChildAt(current_position);
@@ -252,8 +261,7 @@ public class CoverFlowView extends RecyclerView {
         }
     }
 
-    public void setOrientation(int orientation) {
-        this.orientation = orientation;
+    public void setOrientation() {
         DividerItemDecoration itemDecoration;
         if (orientation == VERTICAL) {
             layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -288,6 +296,14 @@ public class CoverFlowView extends RecyclerView {
     @Override
     public LinearLayoutManager getLayoutManager() {
         return layoutManager;
+    }
+
+    @Override
+    public void setAdapter(Adapter adapter) {
+        if (!scrollInfinity) {
+            ((CoverFlowAdapter) adapter).setFactor(1);
+        }
+        super.setAdapter(adapter);
     }
 
     /**
