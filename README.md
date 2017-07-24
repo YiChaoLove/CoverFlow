@@ -21,8 +21,8 @@ It's extends RecyclerView.
 ### Thanks:
 ytumaotong1992
 ### Reference:
-https://github.com/renard314/ListView3d
-http://stackoverflow.com/questions/10211835/android-vertical-listview-with-overlaped-rows
-http://stackoverflow.com/questions/25684167/recyclerview-does-not-scroll-as-expected
-http://sapandiwakar.in/recycler-view-item-click-handler/
-Free image source from https://icons8.com/
+https://github.com/renard314/ListView3d<br>
+http://stackoverflow.com/questions/10211835/android-vertical-listview-with-overlaped-rows<br>
+http://stackoverflow.com/questions/25684167/recyclerview-does-not-scroll-as-expected<br>
+http://sapandiwakar.in/recycler-view-item-click-handler/<br>
+Free image source from https://icons8.com/<br>
